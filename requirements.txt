@@ -3,3 +3,4 @@ torch
 pandas
 streamlit
 requests
+GPT2LMHeadModel
