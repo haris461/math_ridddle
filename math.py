@@ -1,9 +1,37 @@
 import streamlit as st
 from transformers import GPT2LMHeadModel, GPT2Tokenizer
 import torch
+import os
+import requests
+import zipfile
+
+# Model download function
+MODEL_URL = "https://github.com/haris461/math_ridddle/releases/download/v0.1/riddle-factory-model.zip"
+MODEL_PATH = "./riddle-factory-model"
+
+def download_and_extract_model():
+    if not os.path.exists(MODEL_PATH):  # Check if model is already downloaded
+        zip_path = "riddle-factory-model.zip"
+        st.info("Downloading model... Please wait ⏳")
+
+        # Download model
+        response = requests.get(MODEL_URL, stream=True)
+        with open(zip_path, "wb") as file:
+            for chunk in response.iter_content(chunk_size=8192):
+                file.write(chunk)
+
+        # Extract model
+        st.info("Extracting model... 📂")
+        with zipfile.ZipFile(zip_path, "r") as zip_ref:
+            zip_ref.extractall("./")
+
+        os.remove(zip_path)  # Clean up the zip file
+        st.success("Model downloaded and extracted successfully! ✅")
+
+# Download model if not present
+download_and_extract_model()
 
 # Load the fine-tuned model and tokenizer
-MODEL_PATH = "./riddle-factory-model"
 tokenizer = GPT2Tokenizer.from_pretrained(MODEL_PATH)
 model = GPT2LMHeadModel.from_pretrained(MODEL_PATH)
 
